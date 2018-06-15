@@ -1,6 +1,6 @@
 package example
 
-import example.fits.{FirstFit, NextFit}
+import example.fits.{BestFit, FirstFit, NextFit}
 import example.utils.Retrieval.{getBins, getItems}
 
 import scala.annotation.tailrec
@@ -16,6 +16,8 @@ object BinPacking extends App {
   val scalaFirstFitBinCount = FirstFit.calculate(items, bin)
   println(s"Number of bins required in First Fit: $scalaFirstFitBinCount")
 
+  val bestFitBinCount = BestFit.calculate(items, bin)
+  println(s"Number of bins required in Best Fit: $bestFitBinCount")
 
   @tailrec
   def sum(list: List[Int], accumulator: Int): Int = list match {
