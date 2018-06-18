@@ -1,28 +1,25 @@
 package example
 
-import example.fits.{BestFit, FirstFit, NextFit}
+import example.entities.BinPrinter
+import example.fits.LinearFit
 import example.utils.Retrieval.{getBins, getItems}
 
 import scala.annotation.tailrec
 
 object BinPacking extends App {
 
-  val items: List[Int] = getItems
-  val bin: Int = getBins.head
+  val items: List[Float] = getItems
+  val bin: Float = getBins.head
 
-  val nextFitBinCount = NextFit.calculate(items, bin)
-  println(s"Number of bins required in Next Fit: $nextFitBinCount")
+  val perfectBinPacking = math.ceil(sum(items, 0) / bin).toInt
+  println(s"Perfect number of bins: $perfectBinPacking")
 
-  val scalaFirstFitBinCount = FirstFit.calculate(items, bin)
-  println(s"Number of bins required in First Fit: $scalaFirstFitBinCount")
-
-  val bestFitBinCount = BestFit.calculate(items, bin)
-  println(s"Number of bins required in Best Fit: $bestFitBinCount")
+  val bestFinBins = new LinearFit(items, bin).bestFitObjective
+  BinPrinter.printBins(bestFinBins)
 
   @tailrec
-  def sum(list: List[Int], accumulator: Int): Int = list match {
+  def sum(list: List[Float], accumulator: Float): Float = list match {
     case Nil => accumulator
     case x :: xs => sum(xs, x + accumulator)
   }
 }
-

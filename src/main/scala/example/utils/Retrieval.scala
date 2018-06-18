@@ -3,22 +3,22 @@ package example.utils
 import scala.io.Source
 
 object Retrieval {
-  def getItems: List[Int] = {
+  def getItems: List[Float] = {
     val filename = "src/main/resources/items.csv"
-    var items = List[Int]()
+    var items = List[Float]()
     for (line <- Source.fromFile(filename).getLines) {
-      val lineItems: List[Int] = line.split(",").map(_.trim).map(_.toInt).toList
+      val lineItems: List[Float] = line.split(",").map(_.trim).map(_.toFloat).toList
       items = List.concat(items, lineItems)
     }
     println(s"${items.size} item types found.")
     items
   }
 
-  def getBins: List[Int] = {
+  def getBins: List[Float] = {
     val filename = "src/main/resources/bins.csv"
-    var items = List[Int]()
+    var items = List[Float]()
     for (line <- Source.fromFile(filename).getLines) {
-      val lineItems: List[Int] = line.split(",").map(_.toInt).toList
+      val lineItems: List[Float] = line.split(",").map(_.toFloat).toList
       items = List.concat(items, lineItems)
     }
     println(s"${items.size} item types found.")

@@ -25,12 +25,12 @@ object BestFit {
     bins.size
   }
 
-//  Init (minimumSize = binSize + 1)
+  //  Init (minimumSize = binSize + 1)
   @tailrec
   def tailRecBestFit(bins: List[Int], weight: Int, binSize: Int, bi: Int, minimumSize: Int, counter: Int): Int = {
     bins match {
       case Nil => bi
-      case head :: tail if head >= weight && head - weight < minimumSize => tailRecBestFit(tail, weight, binSize, counter, head-weight, counter + 1)
+      case head :: tail if head >= weight && head - weight < minimumSize => tailRecBestFit(tail, weight, binSize, counter, head - weight, counter + 1)
       case _ :: tail => tailRecBestFit(tail, weight, binSize, bi, minimumSize, counter + 1)
     }
   }
