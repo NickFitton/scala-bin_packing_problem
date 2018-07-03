@@ -16,12 +16,12 @@ object Retrieval {
 
   def getBins: List[Float] = {
     val filename = "src/main/resources/bins.csv"
-    var items = List[Float]()
+    var bins = List[Float]()
     for (line <- Source.fromFile(filename).getLines) {
       val lineItems: List[Float] = line.split(",").map(_.toFloat).toList
-      items = List.concat(items, lineItems)
+      bins = List.concat(bins, lineItems)
     }
-    println(s"${items.size} item types found.")
-    items
+    println(s"${bins.size} bin types found.")
+    bins
   }
 }
