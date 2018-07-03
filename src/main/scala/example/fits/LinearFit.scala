@@ -8,49 +8,30 @@ class LinearFit(weights: List[Float], binSize: Float) {
   private val orderedWeights = weights.sortWith(_ > _)
 
   def bestFitObjective: List[Bin] = {
-    var bins = List[Bin]()
-    for (weight <- orderedWeights) {
-      var minimumSize = binSize + 1
-      val bi = bestFitRecursionObjective(bins, weight, binSize, 0, minimumSize, 0)
-
-      if (bi < bins.size && (binSize - bins(bi).getWeight) >= weight && (binSize - bins(bi).getWeight) - weight < minimumSize) {
-        minimumSize = bins(bi).getWeight - weight
-      } else {
-        minimumSize = binSize + 1
-      }
-
-      if (minimumSize == binSize + 1) {
-        val newBin = new Bin(binSize)
-        newBin.addItem(weight)
-        bins = bins :+ newBin
-      } else {
-        val oldBin = bins(bi)
-        oldBin.addItem(weight)
-        bins = bins.patch(bi, Seq(oldBin), 1)
-      }
-    }
-    bins
+    bestFitObjectiveRecursive(orderedWeights, List[Bin]())
   }
 
-  def bestFit: Int = {
-    var bins = List[Float]()
-    for (weight <- orderedWeights) {
-      var minimumSize = binSize + 1
-      val bi = bestFitRecursion(bins, weight, binSize, 0, minimumSize, 0)
+  def bestFit(weights: List[Float], _bins: List[Float]): Int = {
+    var bins = _bins
+    var minimumSize = binSize + 1
+    val bi = bestFitRecursion(bins, weights.head, binSize, 0, minimumSize, 0)
 
-      if (bi < bins.size && bins(bi) >= weight && bins(bi) - weight < minimumSize) {
-        minimumSize = bins(bi) - weight
-      } else {
-        minimumSize = binSize + 1
-      }
-
-      if (minimumSize == binSize + 1) {
-        bins = bins :+ (binSize - weight)
-      } else {
-        bins = bins.patch(bi, Seq(bins(bi) - weight), 1)
-      }
+    if (bi < bins.size && bins(bi) >= weights.head && bins(bi) - weights.head < minimumSize) {
+      minimumSize = bins(bi) - weights.head
+    } else {
+      minimumSize = binSize + 1
     }
-    bins.size
+
+    if (minimumSize == binSize + 1) {
+      bins = bins :+ (binSize - weights.head)
+    } else {
+      bins = bins.patch(bi, Seq(bins(bi) - weights.head), 1)
+    }
+    if (weights.tail == Nil) {
+      bins.size
+    } else {
+      bestFit(weights.tail, bins)
+    }
   }
 
   @tailrec
@@ -59,6 +40,33 @@ class LinearFit(weights: List[Float], binSize: Float) {
       case Nil => bi
       case head :: tail if head >= weight && head - weight < minimumSize => bestFitRecursion(tail, weight, binSize, counter, head - weight, counter + 1)
       case _ :: tail => bestFitRecursion(tail, weight, binSize, bi, minimumSize, counter + 1)
+    }
+  }
+
+  @tailrec
+  private def bestFitObjectiveRecursive(weights: List[Float], _bins: List[Bin]): List[Bin] = {
+    var bins = _bins
+    var minimumSize = binSize + 1
+    val bi = bestFitRecursionObjective(bins, weights.head, binSize, 0, minimumSize, 0)
+
+    if (bi < bins.size && (binSize - bins(bi).getWeight) >= weights.head && (binSize - bins(bi).getWeight) - weights.head < minimumSize) {
+      minimumSize = bins(bi).getWeight - weights.head
+    }
+
+    if (minimumSize == binSize + 1) {
+      val newBin = new Bin(binSize)
+      newBin.addItem(weights.head)
+      bins = bins :+ newBin
+    } else {
+      val oldBin = bins(bi)
+      oldBin.addItem(weights.head)
+      bins = bins.patch(bi, Seq(oldBin), 1)
+    }
+
+    if (weights.tail.isEmpty) {
+      bins
+    } else {
+      bestFitObjectiveRecursive(weights.tail, bins)
     }
   }
 
